@@ -138,6 +138,18 @@ def run_vacuum(target_script_path = "/home/mehdimounsif/Codes/Tests/run_flows/ex
                     process_function(module_name, local_func, left_to_visit, visited)
         
     fd = base_id_func(open(target_script_path).read(), target_modules)
+    files_to_carry_over = run_local_check(target_script_path)
+    # not needed, just need to translate the file during spit_out 
+
+    for f in files_to_carry_over:
+        additional_fd = base_id_func(open(f).read(), target_modules)
+        for k in additional_fd.keys():
+            if k not in fd.keys():
+                fd[k] = []
+            fd[k].extend(additional_fd[k])
+    for k in fd.keys():
+        fd[k] = list(set(fd[k]))
+
     left_to_visit = {k: [] for k in target_modules}
     visited = {k: [] for k in target_modules}
     
@@ -153,7 +165,8 @@ def run_vacuum(target_script_path = "/home/mehdimounsif/Codes/Tests/run_flows/ex
             process_function(k, func, left_to_visit, visited)    
 
     # ARE SOME ADDITIONAL LOCAL FILES USED ? 
-    files_to_carry_over = run_local_check(target_script_path)
+    
+
     
 
     # TMP !!!!! 
@@ -401,18 +414,24 @@ def spit_out(translation_file = os.path.join(os.path.dirname(__file__), "results
                 f.write(collected_code)
 
     # copy pasting the files to carry over
-    for f in config['translation_params']['files_to_carry_over']: 
-        os.system('cp ' + f + ' ' + config['translation_params']['output_libs_folder'])
+    for file in config['translation_params']['files_to_carry_over']: 
+        collected_code, change = process_collected_code(open(file).read(), config)
+        with open(os.path.join(config['translation_params']['output_libs_folder'], os.path.basename(file)), 'w') as f: 
+            f.write(collected_code)
+        changes_log[os.path.basename(file).split('.')[0]] = change
+        # os.system('cp ' + f + ' ' + config['translation_params']['output_libs_folder'])
 
     # Processing the initial script 
     initial_script = open(config['translation_params']['initial_script']).read()
     # print("\n".join(initial_script.split('\n')[:50]))
     collected_code, change = process_collected_code(initial_script, config, debug = True)
+
     # input(json.dumps(change, indent = 4))
-    input("\n".join(collected_code.split('\n')[:50]))
+    # input("\n".join(collected_code.split('\n')[:50]))
     changes_log['initial_script'] = change
     with open(os.path.join(config['translation_params']['output_libs_folder'], config['translation_params']['output_script_name']), 'w') as f: 
         f.write(collected_code)   
+
 
 
 
