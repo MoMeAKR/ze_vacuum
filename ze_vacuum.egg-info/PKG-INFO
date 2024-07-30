@@ -1,0 +1,6 @@
+Metadata-Version: 2.1
+Name: ze_vacuum
+Version: 0.1.0
+Summary: Pull only necessary code snippets from a script
+Author: mOmE
+Requires-Dist: pyperclip

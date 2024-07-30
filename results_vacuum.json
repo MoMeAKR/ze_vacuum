@@ -1,0 +1,57 @@
+{
+    "translation_params": {
+        "output_libs_folder": "/home/mehdimounsif/Codes/my_libs/test_sode",
+        "lib_names": {
+            "momeutils": "base_sode_utils",
+            "mcodeutils": "sode_code_utils"
+        },
+        "base_lib_path": "/home/mehdimounsif/Codes/my_libs/m2me",
+        "initial_script": "/home/mehdimounsif/Codes/SystemDyn/workflow.py",
+        "output_script_name": "sode_main.py",
+        "files_to_carry_over": [
+            "/home/mehdimounsif/Codes/SystemDyn/sode_utils.py"
+        ]
+    },
+    "required": {
+        "mome": [],
+        "momeutils": [
+            "parse_json",
+            "ask_llm",
+            "multi_turn_conversation",
+            "call_recap_to_file",
+            "play_sound_in_thread",
+            "cprint",
+            "print_rgb_text",
+            "load_icl",
+            "crline",
+            "uinput",
+            "crprint"
+        ],
+        "mcodeutils": [
+            "function_call_assignment",
+            "align_function_call_params",
+            "add_module_to_function_call",
+            "find_function_calls",
+            "function_params_from_source_reference",
+            "get_function_params_from_module",
+            "collect_module_path",
+            "get_function_code",
+            "get_function_params",
+            "get_function_call_arguments",
+            "construct_dict",
+            "handle_value",
+            "get_available_vars_in_function",
+            "find_line_number",
+            "get_vars_before_line",
+            "find_problematic_stores",
+            "get_function_kw_args",
+            "find_unused_variables",
+            "get_left_side",
+            "get_lines_with_variables",
+            "get_lines_with_variable",
+            "add_function_arguments"
+        ],
+        "magents": [],
+        "flowme": []
+    }
+}
