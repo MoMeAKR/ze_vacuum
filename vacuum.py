@@ -215,30 +215,43 @@ def collect_code_from_module(source, functions):
 
     class UsefulImportsFounder(ast.NodeVisitor):
 
+        def get_module_name(self, node):
+            if isinstance(node, ast.Name):
+                print('ok {} - {}'.format(node.id, node.lineno))
+                return node.id
+            elif isinstance(node, ast.Attribute):
+                return self.get_module_name(node.value)
+            return None
+
         def visit_Call(self, node): 
             if isinstance(node.func, ast.Attribute):
-                if isinstance(node.func.value, ast.Name):
-                    if node.func.value.id in imports_aliases:
-                        useful_imports.append(node.func.value.id)
-                        # for alias in imports_aliases: 
-                        #         useful_imports.append(alias)
-
-        
+                module_name = self.get_module_name(node.func.value)
+                if module_name in imports_aliases:
+                    useful_imports.append(module_name)
+            self.generic_visit(node)
     for f in functions: 
         f_code = get_function_code(source, f)
         results.extend(f_code.split('\n'))
         results.append('\n')  
     
+    # input("\n".join(results))
+  
     tree = ast.parse(source)
     ImportCollector().visit(tree)
-    UsefulImportsFounder().visit(tree)
+    # input(imports_aliases)
+    UsefulImportsFounder().visit(ast.parse("\n".join(results)))
     # print(imports)
     # print('\n\n')
     # input(list(set(useful_imports)))
+    useful_imports = list(set(useful_imports))
     final_imports = []
     for i in imports: 
         if i.split(' ')[-1] in useful_imports: 
             final_imports.append(i)
+    print("Imports:\n {} ".format("\n".join(imports)))
+    print('='*10)
+    print("useful imports:\n {} ".format("\n".join(useful_imports)))
+    input("Final imports:\n {}".format("\n".join(final_imports)))
 
     results = list(set(final_imports)) + [""]*2 + results
     # results = imports + results
@@ -425,6 +438,7 @@ def spit_out(translation_file = os.path.join(os.path.dirname(__file__), "results
     initial_script = open(config['translation_params']['initial_script']).read()
     # print("\n".join(initial_script.split('\n')[:50]))
     collected_code, change = process_collected_code(initial_script, config, debug = True)
+    print('Careful, imports are not checked in the initial script {}'.format(config['translation_params']['initial_script']))
 
     # input(json.dumps(change, indent = 4))
     # input("\n".join(collected_code.split('\n')[:50]))
